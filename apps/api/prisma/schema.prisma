@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  adult
+  teen
+  parent
+}
+
+enum ConversationType {
+  dm
+  group
+}
+
+enum MessageType {
+  text
+  image
+  gif
+  sticker
+  voice
+}
+
+enum CallType {
+  audio
+  video
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  role      UserRole
+  createdAt DateTime @default(now())
+  profile   Profile?
+  devices   Device[]
+  friendsA  Friend[] @relation("FriendA")
+  friendsB  Friend[] @relation("FriendB")
+  members   Member[]
+  stories   Story[]
+  wallet    Wallet?
+  transfers Transfer[] @relation("TransfersFrom")
+  receipts  Transfer[] @relation("TransfersTo")
+  parentalLinksParent ParentalLink[] @relation("Parent")
+  parentalLinksChild  ParentalLink[] @relation("Child")
+}
+
+model Profile {
+  userId      String  @id
+  displayName String
+  avatarUrl   String?
+  bannerUrl   String?
+  bio         String?
+  status      String   @default("offline")
+  mediaGallery Json    @default("[]")
+  user        User    @relation(fields: [userId], references: [id])
+}
+
+model Device {
+  id               String @id @default(cuid())
+  userId           String
+  publicIdentityKey String
+  pushToken        String?
+  user             User   @relation(fields: [userId], references: [id])
+}
+
+model Friend {
+  id     String @id @default(cuid())
+  aId    String
+  bId    String
+  state  String
+  createdAt DateTime @default(now())
+  aUser  User   @relation("FriendA", fields: [aId], references: [id])
+  bUser  User   @relation("FriendB", fields: [bId], references: [id])
+}
+
+model Conversation {
+  id         String            @id @default(cuid())
+  type       ConversationType
+  createdBy  String
+  createdAt  DateTime          @default(now())
+  members    Member[]
+  messages   Message[]
+  calls      Call[]
+}
+
+model Member {
+  id        String   @id @default(cuid())
+  convId    String
+  userId    String
+  role      String
+  joinedAt  DateTime @default(now())
+  conversation Conversation @relation(fields: [convId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  convId      String
+  senderId    String
+  type        MessageType
+  content     String
+  mediaRef    String?
+  sentAt      DateTime @default(now())
+  readAt      Json     @default("[]")
+  conversation Conversation @relation(fields: [convId], references: [id])
+  sender      User         @relation(fields: [senderId], references: [id])
+}
+
+model Presence {
+  userId       String   @id
+  status       String
+  lastActiveAt DateTime
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model Story {
+  id        String   @id @default(cuid())
+  userId    String
+  mediaRef  String
+  expiresAt DateTime
+  viewers   Json     @default("[]")
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Call {
+  id          String   @id @default(cuid())
+  convId      String
+  type        CallType
+  startedAt   DateTime @default(now())
+  endedAt     DateTime?
+  participants Json    @default("[]")
+  conversation Conversation @relation(fields: [convId], references: [id])
+}
+
+model StickerPack {
+  id         String  @id @default(cuid())
+  title      String
+  cover      String
+  priceCoins Int
+  creatorId  String
+  isFree     Boolean @default(false)
+  creator    User    @relation(fields: [creatorId], references: [id])
+}
+
+model Purchase {
+  id         String   @id @default(cuid())
+  userId     String
+  itemType   String
+  amountCoins Int
+  currency   String
+  price      Float
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Wallet {
+  userId  String @id
+  balance Int    @default(0)
+  user    User   @relation(fields: [userId], references: [id])
+}
+
+model Transfer {
+  id          String   @id @default(cuid())
+  fromUserId  String
+  toUserId    String
+  coins       Int
+  memo        String?
+  createdAt   DateTime @default(now())
+  from        User     @relation("TransfersFrom", fields: [fromUserId], references: [id])
+  to          User     @relation("TransfersTo", fields: [toUserId], references: [id])
+}
+
+model ParentalLink {
+  id         String   @id @default(cuid())
+  childId    String
+  parentId   String
+  nightStart String   @default("23:00")
+  nightEnd   String   @default("05:00")
+  teenCoinCap Int     @default(1000)
+  child      User     @relation("Child", fields: [childId], references: [id])
+  parent     User     @relation("Parent", fields: [parentId], references: [id])
+}
+
+model Settings {
+  userId           String @id
+  theme            String @default('dark')
+  bubbleShape      String @default('pill')
+  accentColor      String @default('#a855f7')
+  optimizationMode String @default('balanced')
+  user             User   @relation(fields: [userId], references: [id])
+}
+
+model QRInvite {
+  id        String   @id @default(cuid())
+  payload   Json
+  signature String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}

@@ -1,0 +1,13 @@
+{
+  "name": "dune",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@8.14.1",
+  "scripts": {
+    "test": "node --test tests",
+    "lint": "node scripts/lint-stub.mjs",
+    "build": "echo 'build stubs'",
+    "dev:web": "echo 'Run Next.js dev server via pnpm --filter web dev'",
+    "dev:api": "echo 'Run NestJS API via pnpm --filter api start:dev'"
+  }
+}
