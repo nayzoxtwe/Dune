@@ -6,8 +6,10 @@
   "scripts": {
     "test": "node --test tests",
     "lint": "node scripts/lint-stub.mjs",
-    "build": "echo 'build stubs'",
-    "dev:web": "echo 'Run Next.js dev server via pnpm --filter web dev'",
-    "dev:api": "echo 'Run NestJS API via pnpm --filter api start:dev'"
+    "build": "turbo build",
+    "dev:web": "pnpm --filter @app/web dev",
+    "dev:api": "pnpm --filter @app/api dev",
+    "db:push": "pnpm --filter @app/api prisma db push",
+    "db:seed": "pnpm --filter @app/api prisma db seed"
   }
 }

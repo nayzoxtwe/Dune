@@ -2,5 +2,7 @@
   "name": "@dune/proto",
   "version": "0.1.0",
   "private": true,
-  "main": "src/index.js"
+  "type": "commonjs",
+  "main": "src/index.js",
+  "types": "src/index.d.ts"
 }

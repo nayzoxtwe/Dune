@@ -1,4 +1,4 @@
-const MessageEnvelope = {
+const MESSAGE_ENVELOPE = {
   version: 1,
   fields: ['conversationId', 'senderId', 'ciphertext', 'type', 'sentAt']
 };
@@ -7,31 +7,28 @@ function safetyNumber(publicKeyA, publicKeyB) {
   const merged = [publicKeyA, publicKeyB].sort().join(':');
   let hash = 0;
   for (let i = 0; i < merged.length; i += 1) {
-    hash = (hash * 31 + merged.charCodeAt(i)) % 1000000;
+    hash = (hash * 31 + merged.charCodeAt(i)) % 1_000_000;
   }
   return hash.toString().padStart(6, '0');
 }
 
-function applyTeenNightMode(now, start = '23:00', end = '05:00') {
-  const [sH, sM] = start.split(':').map(Number);
-  const [eH, eM] = end.split(':').map(Number);
+function applyTeenNightMode(now, startMinutes, endMinutes) {
+  const start = typeof startMinutes === 'number' ? startMinutes : 23 * 60;
+  const end = typeof endMinutes === 'number' ? endMinutes : 5 * 60;
   const minutes = now.getHours() * 60 + now.getMinutes();
-  const startMin = sH * 60 + sM;
-  const endMin = eH * 60 + eM;
-  if (startMin < endMin) {
-    return minutes >= startMin && minutes < endMin;
+  if (start < end) {
+    return minutes >= start && minutes < end;
   }
-  return minutes >= startMin || minutes < endMin;
+  return minutes >= start || minutes < end;
 }
 
 function coinPackEuroToCoins(amountEuro) {
   const base = Math.round(amountEuro * 100);
-  const rounded = Math.round(base / 10) * 10;
-  return rounded;
+  return Math.round(base / 10) * 10;
 }
 
 module.exports = {
-  MessageEnvelope,
+  MESSAGE_ENVELOPE,
   safetyNumber,
   applyTeenNightMode,
   coinPackEuroToCoins

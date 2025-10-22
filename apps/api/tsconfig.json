@@ -1,10 +1,17 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "module": "CommonJS",
     "outDir": "dist",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "types": ["node"],
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*", "prisma/**/*"]
+  "include": ["src/**/*", "prisma/**/*"],
+  "ts-node": {
+    "swc": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }

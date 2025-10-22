@@ -13,5 +13,5 @@ test('demo flow: account to sticker to night mode', () => {
 
   const teenNow = new Date(0);
   teenNow.setHours(23, 15, 0, 0);
-  assert.equal(applyTeenNightMode(teenNow, '23:00', '05:00'), true);
+  assert.equal(applyTeenNightMode(teenNow, 23 * 60, 5 * 60), true);
 });

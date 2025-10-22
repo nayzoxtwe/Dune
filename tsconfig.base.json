@@ -7,6 +7,11 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@proto/*": ["packages/proto/src/*"],
+      "@ui/*": ["packages/ui/src/*"],
+      "@app/api/*": ["apps/api/src/*"]
+    }
   }
 }

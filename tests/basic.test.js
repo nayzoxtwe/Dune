@@ -5,10 +5,10 @@ const { applyTeenNightMode, coinPackEuroToCoins, safetyNumber } = require('../pa
 test('teen night mode wraps over midnight', () => {
   const late = new Date(0);
   late.setHours(23, 30, 0, 0);
-  assert.equal(applyTeenNightMode(late, '23:00', '05:00'), true);
+  assert.equal(applyTeenNightMode(late, 23 * 60, 5 * 60), true);
   const noon = new Date(0);
   noon.setHours(12, 0, 0, 0);
-  assert.equal(applyTeenNightMode(noon, '23:00', '05:00'), false);
+  assert.equal(applyTeenNightMode(noon, 23 * 60, 5 * 60), false);
 });
 
 test('coin packs round to nearest ten coins', () => {

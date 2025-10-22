@@ -85,6 +85,7 @@ export function StoryBar({ items }: StoryBarProps) {
 type BottomNavProps = {
   active: 'home' | 'explore' | 'scan' | 'create' | 'messages';
   unread?: number;
+  onSelect?: (tab: BottomNavProps['active']) => void;
 };
 
 const tabs = [
@@ -95,19 +96,25 @@ const tabs = [
   { id: 'messages', label: 'Messages', icon: LucideMessageCircle }
 ] as const;
 
-export function BottomNav({ active, unread = 0 }: BottomNavProps) {
+export function BottomNav({ active, unread = 0, onSelect }: BottomNavProps) {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 h-14 border-t border-[#1F1F26] bg-[#0B0B0F]/90 backdrop-blur">
       <ul className="mx-auto flex h-full max-w-md items-center justify-around text-xs text-neutral-400">
         {tabs.map(({ id, label, icon: Icon }) => (
           <li key={id} className="relative flex flex-col items-center gap-1">
-            <Icon className={`h-5 w-5 ${active === id ? 'text-[#a855f7]' : 'text-neutral-500'}`} />
-            <span className={active === id ? 'text-[#EDEDED]' : ''}>{label}</span>
-            {id === 'messages' && unread > 0 && (
-              <span className="absolute -top-1 right-2 min-w-[1.2rem] rounded-full bg-red-500 px-1 text-[0.65rem] text-white">
-                {unread}
-              </span>
-            )}
+            <button
+              type="button"
+              onClick={() => onSelect?.(id)}
+              className="flex flex-col items-center gap-1"
+            >
+              <Icon className={`h-5 w-5 ${active === id ? 'text-[#a855f7]' : 'text-neutral-500'}`} />
+              <span className={active === id ? 'text-[#EDEDED]' : ''}>{label}</span>
+              {id === 'messages' && unread > 0 && (
+                <span className="absolute -top-1 right-2 min-w-[1.2rem] rounded-full bg-red-500 px-1 text-[0.65rem] text-white">
+                  {unread}
+                </span>
+              )}
+            </button>
           </li>
         ))}
       </ul>
