@@ -24,6 +24,17 @@ pnpm db:push
 pnpm db:seed
 ```
 
+### Windows one-shot helper
+
+To streamline the Windows 11 developer workflow, run `scripts/setup-db.ps1` from an elevated PowerShell session:
+
+```powershell
+cd path\to\Dune
+powershell -ExecutionPolicy Bypass -File .\scripts\setup-db.ps1
+```
+
+The script checks for PostgreSQL 14+, installs it with Chocolatey when available, provisions the `dune_messenger` database and `postgres` user (password `postgres`), writes a `.env` file with the required secrets, runs `pnpm db:push` and `pnpm db:seed`, and finally opens dev servers. Use flags such as `-SkipInstall`, `-SkipPrisma`, `-NoStart`, or `-ForceEnv` to customise behaviour. Errors (e.g. missing pnpm or network-blocked registries) abort the run and print actionable guidance.
+
 Start the services in separate terminals:
 
 ```bash
